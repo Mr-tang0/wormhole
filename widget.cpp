@@ -12,18 +12,9 @@ Widget::Widget(QWidget *parent)
 
     this->setAttribute(Qt::WA_TranslucentBackground,true);
 
-    this->show();
-    QEventLoop loop;
-    QTimer::singleShot(5000,&loop,[=](){
-
-        this->hide();
-
-    });
-    loop.exec();
-
     //添加屏幕
 
-    // connect(findWindowTimer,&QTimer::timeout,this,[=](){
+    connect(findWindowTimer,&QTimer::timeout,this,[=](){
 
         myDesktopList.clear();
         QDesktopWidget *desktop = QApplication::desktop();
@@ -64,15 +55,19 @@ Widget::Widget(QWidget *parent)
 
             myDesktopList.append(*desk);
         }
-    // });
+    });
 
-    // findWindowTimer->start(10);
+    findWindowTimer->start(6000);
+
 
 
     connect(timer,&QTimer::timeout,this,[=](){
+        i++;
+        if(i >500)ui->label->setText("");
         QPoint screenPos = QCursor::pos();
         int x = screenPos.rx();
         int y = screenPos.ry();
+
 
         for (int i = 0 ; i<myDesktopList.length();i++)
         {
