@@ -40,21 +40,9 @@ private:
 
 
 protected:
-    // bool keyPressed = false;
-    // int time = 0;
-    // void keyPressEvent(QKeyEvent *event) override
-    // {
-    //     switch (event->key()) {
-    //     case Qt::Key_Enter:
-    //         qDebug()<<"pressing";
-    //         keyPressed = true;
-    //         if(!exitTimer->isActive())
-    //         exitTimer->start(10);
-    //         break;
-    //     default:
-    //         break;
-    //     }
-    // }
+    void CreateSystemTrayIcon();
+    void initThis();
+    bool checked = false;
 
 
 

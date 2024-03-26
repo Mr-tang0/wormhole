@@ -1,6 +1,9 @@
 <RCC>
     <qresource prefix="/new/prefix1">
-        <file>Horizontal.png</file>
-        <file>Wertical.png</file>
+        <file>res/Horizontal.png</file>
+        <file>res/icon.ico</file>
+        <file>res/Wertical.png</file>
+        <file>res/alipay.png</file>
+        <file>res/wechat.png</file>
     </qresource>
 </RCC>

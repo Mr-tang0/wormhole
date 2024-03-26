@@ -13,7 +13,7 @@ hole_wertical::hole_wertical(QWidget *parent)
 
 
     img->setStyleSheet("background:transparent;");
-    pix = QPixmap(":/new/prefix1/Wertical.png");
+    pix = QPixmap("qrc:/new/prefix1/res/Wertical.png");
     img->setPixmap(pix);
     this->layout()->addWidget(img);
 

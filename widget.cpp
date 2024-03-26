@@ -1,6 +1,12 @@
 #include "widget.h"
 #include "ui_widget.h"
 #include <QTimer>
+#include <QSystemTrayIcon>
+#include <QMenu>
+#include <QAction>
+#include <QProcess>
+#include <QDir>
+#include "check.h"
 
 Widget::Widget(QWidget *parent)
     : QWidget(parent)
@@ -8,12 +14,70 @@ Widget::Widget(QWidget *parent)
 {
     ui->setupUi(this);
 
+    setWindowFlags(Qt::Tool);
+    CreateSystemTrayIcon();
+
+
+    QProcess process;
+    process.setReadChannel(QProcess::StandardOutput);
+    process.setProcessChannelMode(QProcess::MergedChannels);
+    process.start("wmic CPU get ProcessorID");
+    process.waitForFinished();
+    QString result = process.readAllStandardOutput();
+    process.close();
+    result.remove(" ");
+    result.remove("ProcessorId");
+    result.remove("\r");
+    result.remove("\n");
+
+
+    QString filePath = QCoreApplication::applicationDirPath()+QDir::separator()+"res/user.user";
+    QFile file(filePath);
+    QString content;
+    if(file.open(QIODevice::ReadOnly))
+    {
+        content = QString::fromUtf8(file.readAll());
+        file.close();
+    }
+    qDebug()<<result<<content;
+
+    if(content == result){
+        initThis();
+    }
+    else{
+        Check *check = new Check;
+        check->show();
+        connect(check,&Check::yes,this,[=](){
+            QString filePath = QCoreApplication::applicationDirPath()+QDir::separator()+"res/user.user";
+            QFile file(filePath);
+            file.open(QIODevice::WriteOnly);
+            char *temp = result.toLatin1().data();
+            file.write(temp);
+            file.close();
+            initThis();
+
+        });
+        connect(check,&Check::exit,this,[=](){
+            QApplication::exit(0);
+        });
+
+    }
+
+
+
+}
+
+Widget::~Widget()
+{
+
+    delete ui;
+}
+
+void Widget::initThis()
+{
     this->setWindowFlags(Qt::FramelessWindowHint|Qt::Tool|Qt::WindowStaysOnTopHint);
-
     this->setAttribute(Qt::WA_TranslucentBackground,true);
-
-    //添加屏幕
-
+    this->show();
     connect(findWindowTimer,&QTimer::timeout,this,[=](){
 
         myDesktopList.clear();
@@ -59,15 +123,17 @@ Widget::Widget(QWidget *parent)
 
     findWindowTimer->start(6000);
 
-
-
     connect(timer,&QTimer::timeout,this,[=](){
         i++;
-        if(i >500)ui->label->setText("");
+        if(i >500)
+        {
+            this->hide();
+            i=0;
+        }
         QPoint screenPos = QCursor::pos();
         int x = screenPos.rx();
         int y = screenPos.ry();
-
+        // qDebug()<<screenPos;
 
         for (int i = 0 ; i<myDesktopList.length();i++)
         {
@@ -119,29 +185,33 @@ Widget::Widget(QWidget *parent)
 
     timer->start(10);
 
-    // connect(exitTimer,&QTimer::timeout,this,[=](){
-    //     if(keyPressed){
-    //         time +=10;
-    //         qDebug()<<time;
-    //         if(time>5000){
-    //             qDebug()<<"quit";
-    //             exitTimer->stop();
-    //             qApp->quit();
-    //         }
-    //     }
-    //     else{
-    //         time = 0;
-    //         exitTimer->stop();
-    //     }
-    // });
-
-
-
 }
 
-Widget::~Widget()
+void Widget::CreateSystemTrayIcon()
 {
+    QAction* showAction = new QAction(QStringLiteral("显示"));//项1
+    QAction* exitAction = new QAction(QStringLiteral("退出"));//项2
+    //项1的点击槽函数
+    connect(showAction, &QAction::triggered, this, [=]()
+    {
+        this->show();
+    });
+    //项2的点击槽函数
+    connect(exitAction , &QAction::triggered, this, [=]()
+    {
+        qDebug()<<"exit";
+        QApplication::exit(0);
+    });
 
-    delete ui;
+    //初始化菜单并添加项
+    QMenu* trayMenu = new QMenu(this);//菜单
+    trayMenu->addAction(showAction);
+    trayMenu->addAction(exitAction );
+
+
+    QSystemTrayIcon* trayIcon = new QSystemTrayIcon(this);
+    trayIcon->setIcon(QIcon(":/new/prefix1/res/icon.ico")); //设置托盘图标
+    trayIcon->setContextMenu(trayMenu); //设置菜单
+    trayIcon->show();
 }
 

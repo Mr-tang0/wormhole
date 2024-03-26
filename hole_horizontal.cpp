@@ -11,7 +11,7 @@ hole_horizontal::hole_horizontal(QWidget *parent)
 
 
     img->setStyleSheet("background:transparent;");
-    pix = QPixmap(":/new/prefix1/Horizontal.png");
+    pix = QPixmap(":/new/prefix1/res/Horizontal.png");
     img->setPixmap(pix);
 
     connect(displayTimer,&QTimer::timeout,this,[=](){
