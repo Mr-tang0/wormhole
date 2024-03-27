@@ -15,6 +15,7 @@ SOURCES += \
     hole_horizontal.cpp \
     hole_wertical.cpp \
     main.cpp \
+    menu.cpp \
     mydesktop.cpp \
     widget.cpp
 
@@ -23,6 +24,7 @@ HEADERS += \
     donate.h \
     hole_horizontal.h \
     hole_wertical.h \
+    menu.h \
     mydesktop.h \
     widget.h
 
@@ -31,6 +33,7 @@ FORMS += \
     donate.ui \
     hole_horizontal.ui \
     hole_wertical.ui \
+    menu.ui \
     widget.ui
 
 # Default rules for deployment.

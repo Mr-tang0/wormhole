@@ -8,6 +8,7 @@
 #include <qDebug>
 #include <QDesktopWidget>
 #include <mydesktop.h>
+#include "menu.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -37,6 +38,7 @@ private:
     QTimer *timer = new QTimer;
     QTimer *findWindowTimer = new QTimer;
     QTimer *exitTimer = new QTimer;
+    menu *Menu = new menu;
 
 
 protected:

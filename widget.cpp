@@ -16,6 +16,7 @@ Widget::Widget(QWidget *parent)
 
     setWindowFlags(Qt::Tool);
     CreateSystemTrayIcon();
+    setWindowTitle("WormHole");
 
 
     QProcess process;
@@ -39,9 +40,9 @@ Widget::Widget(QWidget *parent)
         content = QString::fromUtf8(file.readAll());
         file.close();
     }
-    qDebug()<<result<<content;
+    qDebug()<<result<<content.left(16)<<content;
 
-    if(content == result){
+    if(content.left(16) == result){
         initThis();
     }
     else{
@@ -51,7 +52,7 @@ Widget::Widget(QWidget *parent)
             QString filePath = QCoreApplication::applicationDirPath()+QDir::separator()+"res/user.user";
             QFile file(filePath);
             file.open(QIODevice::WriteOnly);
-            char *temp = result.toLatin1().data();
+            char *temp = (result+"1").toLatin1().data();
             file.write(temp);
             file.close();
             initThis();
@@ -161,20 +162,20 @@ void Widget::initThis()
 
                         myDesktopList[i].displayWerticalHole(rate,false);
                     }
-                    //上下
+                    // //上下
 
-                    if(y- myDesktopList[i].top<50 && myDesktopList[i].top!=top)
-                    {
-                        float rate = float(x-150)/float(myDesktopList[i].width);
+                    // if(y- myDesktopList[i].top<50 && myDesktopList[i].top!=top)
+                    // {
+                    //     float rate = float(x-150)/float(myDesktopList[i].width);
 
-                        myDesktopList[i].displayHorizontalHole(rate,true);
-                    }
-                    else if(myDesktopList[i].bottom-y <50 && myDesktopList[i].bottom!=bottom)
-                    {
-                        float rate = float(x-150)/float(myDesktopList[i].width);
+                    //     myDesktopList[i].displayHorizontalHole(rate,true);
+                    // }
+                    // else if(myDesktopList[i].bottom-y <50 && myDesktopList[i].bottom!=bottom)
+                    // {
+                    //     float rate = float(x-150)/float(myDesktopList[i].width);
 
-                        myDesktopList[i].displayHorizontalHole(rate,false);
-                    }
+                    //     myDesktopList[i].displayHorizontalHole(rate,false);
+                    // }
                 }
             }
         }
@@ -189,14 +190,20 @@ void Widget::initThis()
 
 void Widget::CreateSystemTrayIcon()
 {
-    QAction* showAction = new QAction(QStringLiteral("显示"));//项1
-    QAction* exitAction = new QAction(QStringLiteral("退出"));//项2
+    QAction* showAction = new QAction(QStringLiteral("状态"));//项1
+    QAction* setAction = new QAction(QStringLiteral("菜单"));//项2
+    QAction* exitAction = new QAction(QStringLiteral("退出"));//项3
     //项1的点击槽函数
     connect(showAction, &QAction::triggered, this, [=]()
     {
         this->show();
     });
     //项2的点击槽函数
+    connect(setAction, &QAction::triggered, this, [=]()
+    {
+        Menu->show();
+    });
+
     connect(exitAction , &QAction::triggered, this, [=]()
     {
         qDebug()<<"exit";
@@ -206,6 +213,7 @@ void Widget::CreateSystemTrayIcon()
     //初始化菜单并添加项
     QMenu* trayMenu = new QMenu(this);//菜单
     trayMenu->addAction(showAction);
+    trayMenu->addAction(setAction );
     trayMenu->addAction(exitAction );
 
 
